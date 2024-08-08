@@ -1,0 +1,168 @@
+
+     << ANSIBLE >>
+
+ << CONFIGURATION MANAGEMENT >> #Puppet,#Chef,#Ansible,#Salt
+ 
+ --> Ansible can perform 'n' No.of operations from 1 serverF
+ 
+--> Infrastructure Definition (Infrastructure as Code - IaC):
+   
+   You define the infrastructure required for your web application using a tool like Terraform. Your infrastructure might include:
+   - Virtual machines (VMs) for web servers
+   - Load balancers for distributing traffic
+   - Database instances
+   - Networking configurations (subnets, security groups, etc.)
+S
+   
+--> Configuration Management:
+   
+   After defining the infrastructure, you use configuration management tools like Ansible to configure the software on those instances:
+   - Install dependencies (e.g., Apache, Nginx, Node.js)
+   - Set up configuration files (e.g., for web servers, database connections)
+   - Deploy application code to web servers
+   - Configure load balancer settings (e.g., routing rules)
+
+  
+
+--> Why ANSIBLE                 | Puppet
+--> Push Mechanism              | Pull Mechanism 
+--> Agentless                   | Master/Slave architecture
+--> Dynamic Inventory
+--> Supports both Windows/Linux
+--> "yaml" language
+--> Can write own Python modules #can share ansible modules using 'Ansible Galaxy'
+--> Disadvantages with windows,Debugging,Performance issues with parallel execution
+
+
+ANSIBLE Q/A
+ --> Ansible uses Python language 
+ --> It supports both Windows/Linux #For windows uses 'win RM' protocol and for linux uses 'ssh'
+--> Why ansibles used most?
+--> Public IP -- SSH connection -- Allows Ansible to connect with any cloud technology like AWS/AZURE/GCP
+ 
+              << PROJECT >>  #Day15
+
+
+#Day15 Today we started by creating 2 EC2 instances
+--> connect to those instances ssh -i /home/rguktrkvalley/Downloads/test.pem ubuntu@16.171.149.126(pub)
+
+--> Else connect using ssh client as
+##Copy the ssh id from server instance, 
+##Then open terminal and Go to cd Downloads where our keypair exists, paste the ssh ID. Hence it is connected to the instance.
+
+--> First instance is 'server1'             #server1
+--> Second instance is 'server2'            #server2
+
+--> First step is to ansible in server1 
+--> Then configure server2  without using any password from server1
+
+## There are possible ways such as
+--> ssh-copy-id "private IP of the target instance"    
+## Else
+--> Generate "ssh-keygen" in server1, copy the public key 
+--> Then go to .ssh in server2, paste public key in authorized_keys of server2 
+--> Use ssh "private IP of server2"    >> Hence it is connected to server2
+
+--> ls ~/.ssh
+ 
+ 
+         << ANSIBLE adhoc commands >>
+--> ansible -i inventory all -m "shell" -a "touch devopsclass"
+--> ls -ltr & du -sh
+
+## Ansible adhoc cmds is for 1 or 2 server 
+## Ansible playbook for multiple servers
+
+        Installing Nginx and restart Nginx (engine-x)
+             ANSIBLE PLAYBOOK
+             
+--> vim first_playbook.yml
+---    #It indicates it's yaml file
+- name: Install and Start Nginx ('-' indicates list of playbooks)
+  hosts: all
+  become: true
+  
+  tasks:
+  #1st task
+   - name: Install Nginx
+   # shell: apt install nginx
+     (or)
+   # apt:
+       name: nginx
+       state: present
+  #2nd task    
+   - name: Start Nginx
+     service: 
+        name: nginx
+        state: started
+         
+--> Now executing the playbook
+--> ansible-playbook -i inventory "playbook name"  
+
+
+
+      << ANSIBLE ROLES >>
+--> Ansible Roles is efficient way of writing playbooks that will improve the efficiency to write complex playbooks
+
+--> mkdir second-playbook
+--> cd second_playbook
+--> ansible-galaxy role init kubernetes
+
+--> ls kubernetes/
+--> ls -ltr kubernetes
+   ## Always use ansible galaxy to create roles
+   ## You can write structured and efficient playbooks
+   
+=============================================================   
+=============================================================   
+   Ansible Modules :
+1. Command: To execute Linux cmnds on any remote server
+2. Shell: To run Shell Scripts or python scripts
+3. Ping: To Check Network Connectivity
+4. User: Can Create users and even modifications on any remote server
+5. File: Can Create/remove files,directories change permissions owner/group
+6. Copy: Can copy the files from cnotroller to manage nodes/Hosts
+7. Fetch: Can copy the files from Manage nodes/Hosts to the controller
+8. git: Can run git cmnds in 'N' No.of servers
+9. get_url : Download files from remote machines
+10. replace: Used to replace the TEXT in a file
+11. apt: alternate for apt-get(in linux) whatever apt-get can done in linux, use apt module in Ansible
+12. yum: yum works on centOS/Redhat linux 
+13. Service: service cmnd if we use in controller it will apply on all Host servers
+14. Stat: Capture detailed information about Files/Folders
+15. debug: It's like Print statement in Ansible
+16. Pause: Can pause playbooks at any time in ansible
+17. include_tasks: Child playbooks
+18. uri : It is used to check the URL we used is reachable or not
+19. docker_container:
+20. docker_image:
+
+==============================================================================
+==============================================================================
+
+1. Adhoc commands (syntax):  ansible all/ip/group_name -i path of inventory -m module name -a "argument"
+------ asnible all -i  /etc/ansible/hosts -m command -a 'free -m' 
+2. Playbooks
+3. Roles
+
+-------------------------------------------------------------------
+-->#1 ansible all -i 'customized inventory path' -m command -a 'free -m' 
+------ ansible all -i myinventory -m command -a 'free -m'
+-->#2 ansible all #etc/ansible/hosts is a default path# #command(only) is a default line in ansible# -a 'free -m'
+------ ansible all -a 'free -m'
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
